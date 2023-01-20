@@ -1,12 +1,17 @@
 import { IControllerRoute } from "./routes.interface";
 import { Response, Router } from "express";
-import { LoggerService } from "../logger/logger.service";
+import { ILogger } from "../logger/logger.interface";
+import { injectable } from "inversify";
 
+// Важно добавить для работы inversify библиотеку reflect-metadata
+import "reflect-metadata";
+
+@injectable()
 export abstract class BaseControler {
     private readonly _router: Router;
-    private logger: LoggerService;
+    private logger: ILogger;
 
-    constructor(logger: LoggerService) {
+    constructor(logger: ILogger) {
         this._router = Router();
         this.logger = logger;
     }
@@ -14,17 +19,17 @@ export abstract class BaseControler {
         return this._router;
     }
 
-    public created(res: Response) {
-        return res.sendStatus(201);
-    }
-
     public send<T>(res: Response, message: T, code: number) {
         res.type("application/json");
-        return res.sendStatus(code).json(message);
+        return res.status(code).json(message);
     }
 
     public ok<T>(res: Response, message: T) {
         return this.send(res, message, 200);
+    }
+
+    public created(res: Response) {
+        return res.sendStatus(201);
     }
 
     protected bindRoutes(routes: IControllerRoute[]) {

@@ -1,18 +1,25 @@
 import { BaseControler } from "../common/base.controller";
-import { LoggerService } from "../logger/logger.service";
 import { NextFunction, Request, Response } from "express";
+import { inject, injectable } from "inversify";
+import { ILogger } from "../logger/logger.interface";
+import { TYPES } from "../types";
 
+// Важно добавить для работы inversify библиотеку reflect-metadata
+import "reflect-metadata";
+import { HTTPError } from "../errors/http-error.class";
+
+@injectable()
 export class UserController extends BaseControler {
     path: string;
-    constructor(logger: LoggerService) {
-        super(logger);
+    constructor(@inject(TYPES.ILogger) private loggerService: ILogger) {
+        super(loggerService);
         this.bindRoutes([
             { path: "/register", method: "post", func: this.register },
             { path: "/login", method: "post", func: this.login },
         ]);
     }
     login(req: Request, res: Response, next: NextFunction) {
-        this.ok(res, "login");
+        next(new HTTPError(401, "Ошибка авторизации", "login"));
     }
     register(req: Request, res: Response, next: NextFunction) {
         this.ok(res, "register");

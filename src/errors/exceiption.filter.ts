@@ -1,13 +1,17 @@
 import { IExeptionFilter } from "./exceiption.filter.interface";
 import { Request, Response, NextFunction } from "express";
-import { LoggerService } from "../logger/logger.service";
 import { HTTPError } from "./http-error.class";
+import { ILogger } from "../logger/logger.interface";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../types";
 
+// Важно добавить для работы inversify библиотеку reflect-metadata
+import "reflect-metadata";
+
+@injectable()
 export class ExeptionFilter implements IExeptionFilter {
-    logger: LoggerService;
-    constructor(logger: LoggerService) {
-        this.logger = logger;
-    }
+    constructor(@inject(TYPES.ILogger) private logger: ILogger) {}
+
     catch(
         err: Error | HTTPError,
         req: Request,
