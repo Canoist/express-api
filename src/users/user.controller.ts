@@ -7,9 +7,10 @@ import { TYPES } from "../types";
 // Важно добавить для работы inversify библиотеку reflect-metadata
 import "reflect-metadata";
 import { HTTPError } from "../errors/http-error.class";
+import { IUserController } from "./user.interface";
 
 @injectable()
-export class UserController extends BaseControler {
+export class UserController extends BaseControler implements IUserController {
     path: string;
     constructor(@inject(TYPES.ILogger) private loggerService: ILogger) {
         super(loggerService);
