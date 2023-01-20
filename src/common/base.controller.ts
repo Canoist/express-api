@@ -1,4 +1,4 @@
-import { IControllerRoute } from "./routes.interface";
+import { ExpressReturnType, IControllerRoute } from "./routes.interface";
 import { Response, Router } from "express";
 import { ILogger } from "../logger/logger.interface";
 import { injectable } from "inversify";
@@ -15,24 +15,24 @@ export abstract class BaseControler {
         this._router = Router();
         this.logger = logger;
     }
-    get router() {
+    get router(): Router {
         return this._router;
     }
 
-    public send<T>(res: Response, message: T, code: number) {
+    public send<T>(res: Response, message: T, code: number): ExpressReturnType {
         res.type("application/json");
         return res.status(code).json(message);
     }
 
-    public ok<T>(res: Response, message: T) {
+    public ok<T>(res: Response, message: T): ExpressReturnType {
         return this.send(res, message, 200);
     }
 
-    public created(res: Response) {
+    public created(res: Response): ExpressReturnType {
         return res.sendStatus(201);
     }
 
-    protected bindRoutes(routes: IControllerRoute[]) {
+    protected bindRoutes(routes: IControllerRoute[]): void {
         for (const route of routes) {
             this.logger.log(`[${route.method}] ${route.path}`);
             const handler = route.func.bind(this);

@@ -19,10 +19,10 @@ export class UserController extends BaseControler implements IUserController {
             { path: "/login", method: "post", func: this.login },
         ]);
     }
-    login(req: Request, res: Response, next: NextFunction) {
+    login(req: Request, res: Response, next: NextFunction): void {
         next(new HTTPError(401, "Ошибка авторизации", "login"));
     }
-    register(req: Request, res: Response, next: NextFunction) {
+    register(req: Request, res: Response, next: NextFunction): void {
         this.ok(res, "register");
     }
 }
