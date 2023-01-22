@@ -8,6 +8,8 @@ import { TYPES } from "../types";
 import "reflect-metadata";
 import { HTTPError } from "../errors/http-error.class";
 import { IUserController } from "./user.interface";
+import { UserLoginDto } from "./dto/user-login.dto";
+import { UserRegisterDto } from "./dto/user-register.dto";
 
 @injectable()
 export class UserController extends BaseControler implements IUserController {
@@ -20,11 +22,13 @@ export class UserController extends BaseControler implements IUserController {
         ]);
     }
 
-    login(req: Request, res: Response, next: NextFunction): void {
+    login(req: Request<{}, {}, UserLoginDto>, res: Response, next: NextFunction): void {
+        console.log(req.body);
         next(new HTTPError(401, "Ошибка авторизации", "login"));
     }
 
-    register(req: Request, res: Response, next: NextFunction): void {
+    register(req: Request<{}, {}, UserRegisterDto>, res: Response, next: NextFunction): void {
+        console.log(req.body);
         this.ok(res, "register");
     }
 }

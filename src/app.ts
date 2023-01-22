@@ -27,6 +27,10 @@ export class App {
         this.exeptionFilter = exeptionFilter;
     }
 
+    useMiddleware(): void {
+        this.app.use(express.json());
+    }
+
     useRoutes(): void {
         this.app.use("/users", this.userController.router);
     }
@@ -36,6 +40,7 @@ export class App {
     }
 
     public async init(): Promise<void> {
+        this.useMiddleware();
         this.useRoutes();
         this.useExceptionFilters();
         this.server = this.app.listen(this.port);
