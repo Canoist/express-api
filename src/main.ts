@@ -7,6 +7,8 @@ import { LoggerService } from "./logger/logger.service";
 import { TYPES } from "./types";
 import { UserController } from "./users/user.controller";
 import { IUserController } from "./users/user.interface";
+import IUserService from "./users/users.interface";
+import { UserService } from "./users/users.service";
 
 // async function bootstrap() {
 // const logger = new LoggerService();
@@ -31,6 +33,7 @@ export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
     bind<IUserController>(TYPES.UserController).to(UserController);
     // bind<UserController>(TYPES.UserController).to(UserController);
     // Если не буем использовать больше никаких реализаций для данных методов, то можно в <> указывать не интерфейс, а саму реализацию
+    bind<IUserService>(TYPES.UserService).to(UserService);
     bind<App>(TYPES.Application).to(App);
 });
 
