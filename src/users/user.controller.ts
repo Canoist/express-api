@@ -13,6 +13,8 @@ import { UserRegisterDto } from "./dto/user-register.dto";
 import { User } from "./user.entity";
 import { UserService } from "./users.service";
 import ValidateMiddlware from "../common/validate.middleware";
+import { sign } from "jsonwebtoken";
+import ConfigService from "../config/config.service";
 
 @injectable()
 export class UserController extends BaseControler implements IUserController {
@@ -20,6 +22,7 @@ export class UserController extends BaseControler implements IUserController {
     constructor(
         @inject(TYPES.ILogger) private loggerService: ILogger,
         @inject(TYPES.UserService) private userService: UserService,
+        @inject(TYPES.ConfigService) private configService: ConfigService,
     ) {
         super(loggerService);
         this.bindRoutes([
@@ -48,7 +51,10 @@ export class UserController extends BaseControler implements IUserController {
         if (!result) {
             return next(new HTTPError(401, "Auth error", "login"));
         }
-        this.ok(res, { isValidate: result });
+
+        const jwt = await this.signJWT(body.email, this.configService.get("SECRET"));
+
+        this.ok(res, { jwt });
     }
 
     async register(
@@ -63,5 +69,24 @@ export class UserController extends BaseControler implements IUserController {
         }
 
         this.ok(res, result);
+    }
+
+    private signJWT(email: string, secret: string): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            sign(
+                {
+                    email,
+                    iat: Math.floor(Date.now() / 1000),
+                },
+                secret,
+                { algorithm: "HS256" },
+                (err, token) => {
+                    if (err) {
+                        reject(err);
+                    }
+                    resolve(token as string);
+                },
+            );
+        });
     }
 }
