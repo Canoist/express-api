@@ -51,10 +51,14 @@ export class UserController extends BaseControler implements IUserController {
         if (!result) {
             return next(new HTTPError(401, "Auth error", "login"));
         }
+<<<<<<< HEAD
 
         const jwt = await this.signJWT(body.email, this.configService.get("SECRET"));
 
         this.ok(res, { jwt });
+=======
+        this.ok(res, { isValidate: result });
+>>>>>>> fb29175a5c10982b9ef369707234919faf464ad9
     }
 
     async register(
