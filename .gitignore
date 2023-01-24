@@ -3,6 +3,5 @@
 /.vscode
 /.clinic
 .env
-.env2
 /prisma/dev.db
 /prisma/dev.db-journal
