@@ -11,6 +11,8 @@ import { TYPES } from "./types";
 import { UserController } from "./users/user.controller";
 import { IUserController } from "./users/user.interface";
 import IUserService from "./users/users.interface";
+import UsersRepository from "./users/users.repository";
+import IUsersRepository from "./users/users.repository.interface";
 import { UserService } from "./users/users.service";
 
 // async function bootstrap() {
@@ -40,6 +42,7 @@ export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
     // bind<UserController>(TYPES.UserController).to(UserController);
     // Если не буем использовать больше никаких реализаций для данных методов, то можно в <> указывать не интерфейс, а саму реализацию
     bind<IUserService>(TYPES.UserService).to(UserService);
+    bind<IUsersRepository>(TYPES.UsersRepository).to(UsersRepository).inSingletonScope();
     bind<App>(TYPES.Application).to(App);
 });
 
