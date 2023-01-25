@@ -79,7 +79,8 @@ export default class UserController extends BaseControler implements IUserContro
         res: Response,
         next: NextFunction,
     ): Promise<void> {
-        this.ok(res, { email: userEmail });
+        const result = await this.userService.getUser(userEmail);
+        this.ok(res, { email: result?.email, id: result?.id });
     }
 
     private signJWT(email: string, secret: string): Promise<string> {
