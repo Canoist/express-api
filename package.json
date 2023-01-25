@@ -12,7 +12,7 @@
         "generate": "prisma generate",
         "lint": "eslint ./src/**",
         "lint:fix": "eslint ./src/** --fix",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "jest"
     },
     "repository": {
         "type": "git",

@@ -1,10 +1,12 @@
 import "reflect-metadata";
-import { Container } from "inversify";
+import { Container, id } from "inversify";
 import IConfigService from "../config/config.service.interface";
 import { TYPES } from "../types";
 import IUsersRepository from "./users.repository.interface";
 import { UserService } from "./users.service";
 import IUserService from "./users.service.interface";
+import { User } from "./user.entity";
+import { UserModel } from "@prisma/client";
 
 const ConfigServiceMock: IConfigService = {
     get: jest.fn(),
@@ -33,5 +35,28 @@ beforeAll(() => {
 });
 
 describe("User service", () => {
-    it("createUser", async () => {});
+    it("createUser", async () => {
+        configService.get = jest.fn().mockReturnValueOnce("1");
+        // Имитируем получения данных из файла конфига
+
+        usersRepository.create = jest.fn().mockImplementationOnce(
+            (user: User): UserModel => ({
+                email: user.email,
+                password: user.password,
+                name: user.name,
+                id: 1,
+            }),
+        );
+        // Имитируем создание пользователя в базе данных
+
+        const createdUser = await usersservice.createUser({
+            email: "a@a.ru",
+            password: "somePass",
+            name: "user",
+        });
+
+        expect(createdUser?.id).toEqual(1);
+        expect(createdUser?.password).not.toEqual("somePass");
+        // Сам тест
+    });
 });
