@@ -16,6 +16,7 @@ import { sign } from "jsonwebtoken";
 import ConfigService from "../config/config.service";
 import IUserController from "./user.controller.interface";
 import IToken from "../common/token.interface";
+import AuthGuard from "../common/auth.guard";
 
 @injectable()
 export default class UserController extends BaseControler implements IUserController {
@@ -39,7 +40,7 @@ export default class UserController extends BaseControler implements IUserContro
                 func: this.login,
                 middlewares: [new ValidateMiddlware(UserLoginDto)],
             },
-            { path: "/info", method: "get", func: this.info, middlewares: [] },
+            { path: "/info", method: "get", func: this.info, middlewares: [new AuthGuard()] },
         ]);
     }
 

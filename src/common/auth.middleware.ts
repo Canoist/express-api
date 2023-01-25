@@ -6,7 +6,7 @@ import IToken from "./token.interface";
 export default class AuthMiddleware implements IMiddleware {
     constructor(private secret: string) {}
 
-    async execute(req: Request, res: Response, next: NextFunction): Promise<void> {
+    execute(req: Request, res: Response, next: NextFunction): void {
         if (req.headers.authorization) {
             verify(
                 req.headers.authorization.split(" ")[1],
