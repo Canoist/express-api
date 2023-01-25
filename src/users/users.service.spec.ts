@@ -20,7 +20,7 @@ const UsersRepository: IUsersRepository = {
 const container = new Container();
 let configService: IConfigService;
 let usersRepository: IUsersRepository;
-let usersservice: IUserService;
+let userService: IUserService;
 
 beforeAll(() => {
     container.bind<IUserService>(TYPES.UserService).to(UserService);
@@ -30,9 +30,11 @@ beforeAll(() => {
 
     configService = container.get<IConfigService>(TYPES.ConfigService);
     usersRepository = container.get<IUsersRepository>(TYPES.UsersRepository);
-    usersservice = container.get<IUserService>(TYPES.UserService);
+    userService = container.get<IUserService>(TYPES.UserService);
     // Получили компоненты из контейнера
 });
+
+let createdUser: UserModel | null;
 
 describe("User service", () => {
     it("createUser", async () => {
@@ -49,7 +51,7 @@ describe("User service", () => {
         );
         // Имитируем создание пользователя в базе данных
 
-        const createdUser = await usersservice.createUser({
+        createdUser = await userService.createUser({
             email: "a@a.ru",
             password: "somePass",
             name: "user",
@@ -58,5 +60,32 @@ describe("User service", () => {
         expect(createdUser?.id).toEqual(1);
         expect(createdUser?.password).not.toEqual("somePass");
         // Сам тест
+    });
+
+    it("validateUser - success", async () => {
+        usersRepository.find = jest.fn().mockReturnValueOnce(createdUser);
+        const result = await userService.validateUser({
+            email: "a@a.ru",
+            password: "somePass",
+        });
+        expect(result).toBeTruthy();
+    });
+
+    it("validateUser - failed", async () => {
+        usersRepository.find = jest.fn().mockReturnValueOnce(createdUser);
+        const result = await userService.validateUser({
+            email: "a@a.ru",
+            password: "someWrongPass",
+        });
+        expect(result).toBeFalsy();
+    });
+
+    it("validateUser - user not found", async () => {
+        usersRepository.find = jest.fn().mockReturnValueOnce(null);
+        const result = await userService.validateUser({
+            email: "a@2a.ru",
+            password: "someWrongPass",
+        });
+        expect(result).toBeFalsy();
     });
 });
