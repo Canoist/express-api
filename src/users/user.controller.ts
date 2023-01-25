@@ -7,7 +7,6 @@ import { TYPES } from "../types";
 // Важно добавить для работы inversify библиотеку reflect-metadata
 import "reflect-metadata";
 import { HTTPError } from "../errors/http-error.class";
-import { IUserController } from "./user.interface";
 import { UserLoginDto } from "./dto/user-login.dto";
 import { UserRegisterDto } from "./dto/user-register.dto";
 import { User } from "./user.entity";
@@ -15,9 +14,11 @@ import { UserService } from "./users.service";
 import ValidateMiddlware from "../common/validate.middleware";
 import { sign } from "jsonwebtoken";
 import ConfigService from "../config/config.service";
+import IUserController from "./user.controller.interface";
+import IToken from "../common/token.interface";
 
 @injectable()
-export class UserController extends BaseControler implements IUserController {
+export default class UserController extends BaseControler implements IUserController {
     path: string;
     constructor(
         @inject(TYPES.ILogger) private loggerService: ILogger,
@@ -32,7 +33,13 @@ export class UserController extends BaseControler implements IUserController {
                 func: this.register,
                 middlewares: [new ValidateMiddlware(UserRegisterDto)],
             },
-            { path: "/login", method: "post", func: this.login },
+            {
+                path: "/login",
+                method: "post",
+                func: this.login,
+                middlewares: [new ValidateMiddlware(UserLoginDto)],
+            },
+            { path: "/info", method: "get", func: this.info, middlewares: [] },
         ]);
     }
 
@@ -64,6 +71,14 @@ export class UserController extends BaseControler implements IUserController {
         }
 
         this.ok(res, result);
+    }
+
+    async info(
+        { userEmail }: Request<{}, {}, UserRegisterDto>,
+        res: Response,
+        next: NextFunction,
+    ): Promise<void> {
+        this.ok(res, { email: userEmail });
     }
 
     private signJWT(email: string, secret: string): Promise<string> {

@@ -8,12 +8,12 @@ import { IExeptionFilter } from "./errors/exceiption.filter.interface";
 import { ILogger } from "./logger/logger.interface";
 import { LoggerService } from "./logger/logger.service";
 import { TYPES } from "./types";
-import { UserController } from "./users/user.controller";
-import { IUserController } from "./users/user.interface";
-import IUserService from "./users/users.interface";
+import IUserService from "./users/users.service.interface";
 import UsersRepository from "./users/users.repository";
 import IUsersRepository from "./users/users.repository.interface";
 import { UserService } from "./users/users.service";
+import IUserController from "./users/user.controller.interface";
+import UserController from "./users/user.controller";
 
 // async function bootstrap() {
 // const logger = new LoggerService();

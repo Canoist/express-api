@@ -3,13 +3,14 @@ import { Server } from "http";
 import { inject, injectable } from "inversify";
 import { ILogger } from "./logger/logger.interface";
 import { TYPES } from "./types";
-import { UserController } from "./users/user.controller";
 
 // Важно добавить для работы inversify библиотеку reflect-metadata
 import "reflect-metadata";
 import { IExeptionFilter } from "./errors/exceiption.filter.interface";
 import IConfigService from "./config/config.service.interface";
 import { PrismaService } from "./database/prisma.service";
+import UserController from "./users/user.controller";
+import AuthMiddleware from "./common/auth.middleware";
 
 @injectable()
 export class App {
@@ -33,6 +34,8 @@ export class App {
 
     useMiddleware(): void {
         this.app.use(express.json());
+        const authMiddlware = new AuthMiddleware(this.configService.get("SECRET"));
+        this.app.use(authMiddlware.execute.bind(authMiddlware));
     }
 
     useRoutes(): void {
