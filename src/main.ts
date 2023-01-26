@@ -15,18 +15,6 @@ import { UserService } from "./users/users.service";
 import IUserController from "./users/user.controller.interface";
 import UserController from "./users/user.controller";
 
-// async function bootstrap() {
-// const logger = new LoggerService();
-// const app = new App(
-//     logger,
-//     new UserController(logger),
-//     new ExeptionFilter(logger)
-// );
-// await app.init();
-// }
-
-// bootstrap();
-
 interface IBootstrapReturn {
     appContainer: Container;
     app: App;
@@ -46,12 +34,12 @@ export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
     bind<App>(TYPES.Application).to(App);
 });
 
-function bootstrap(): IBootstrapReturn {
+async function bootstrap(): Promise<IBootstrapReturn> {
     const appContainer = new Container();
     appContainer.load(appBindings);
     const app = appContainer.get<App>(TYPES.Application);
-    app.init();
+    await app.init();
     return { app, appContainer };
 }
 
-export const { app, appContainer } = bootstrap();
+export const boot = bootstrap();
